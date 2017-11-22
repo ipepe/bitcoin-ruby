@@ -45,7 +45,7 @@ module Bitcoin
     end
 
     def to_i
-      int_from(self.class.to_base58)
+      self.class.int_from(to_base58)
     end
 
     # Import private key from base58 fromat as described in
