@@ -17,6 +17,37 @@ module Bitcoin
       k = new(nil, nil, opts); k.generate; k
     end
 
+    def pub_in_bits
+      pub_uncompressed.to_i(16).to_s(2).rjust(515, '0').split('').map(&:to_i)
+    end
+
+    def priv_in_bits
+      priv.to_i(16).to_s(2).rjust(256, '0').split('').map(&:to_i)
+    end
+
+    def self.wif_from(int)
+      priv = int.to_s(16).upcase.rjust(64, '0')
+      data = Bitcoin.network[:privkey_version] + priv
+      data += "01"  if @pubkey_compressed
+      hex  = data + Bitcoin.checksum(data)
+      Bitcoin.int_to_base58( hex.to_i(16) )
+    end
+
+    def self.from_int(int)
+      from_base58(wif_from(int))
+    end
+
+    def self.int_from(wif)
+      hex = Bitcoin.decode_base58(wif)
+      compressed = hex.size == 76
+      version, key, flag, checksum = hex.unpack("a2a64a#{compressed ? 2 : 0}a8")
+      key.to_i(16)
+    end
+
+    def to_i
+      int_from(self.class.to_base58)
+    end
+
     # Import private key from base58 fromat as described in
     # https://en.bitcoin.it/wiki/Private_key#Base_58_Wallet_Import_format and
     # https://en.bitcoin.it/wiki/Base58Check_encoding#Encoding_a_private_key.

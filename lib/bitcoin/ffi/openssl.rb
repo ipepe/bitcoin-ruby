@@ -113,9 +113,9 @@ module OpenSSL_EC
       #der_to_private_key( ptr.read_pointer.read_string(length).unpack("H*")[0] )
     end
 
-    if priv_hex != private_key_hex
-      raise "regenerated wrong private_key, raise here before generating a faulty public_key too!"
-    end
+    # if priv_hex != private_key_hex
+    #   raise "regenerated wrong private_key, raise here before generating a faulty public_key too!"
+    # end
 
 
     length = i2o_ECPublicKey(eckey, nil)
